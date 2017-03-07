@@ -294,7 +294,7 @@ class Vehicles:
     def bbox_new(self, bboxes):
         self.bboxes.append(bboxes)
         if self.frames >= self.max_frames:
-            self.bboxes = self.bboxes[1:]
+            self.bboxes = self.bboxes[8:]
             self.frames -= 1
             
     def heatmap(self, img):
@@ -307,12 +307,11 @@ class Vehicles:
         return heat
 
 # Create a pipeline to detect cars in video
-def pipeline(img, detected_vehicles=None):
-    if detected_vehicles == None:
-        detected_vehicles = Vehicles()
-    
+def pipeline(img, threshold=35):
     # Search for cars with sliding windows
     scales = [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 3]
+    
+    # Search for cars using windows of each scale
     for scale in (scales):
         out_img, box_list = find_cars(img, ystart, ystop, scale, svc, ORIENT, PIX_PER_CELL, CELL_PER_BLOCK, (32, 32), 32)
         detected_vehicles.bbox_new(box_list)
@@ -320,7 +319,7 @@ def pipeline(img, detected_vehicles=None):
     detected_vehicles.frames +=1
     
     # Find final boxes from heatmap using label function
-    heat = detected_vehicles.heatmap(img)
+    heat = detected_vehicles.heatmap(img, threshold)
     heatmap = np.clip(heat, 0, 255)
     labels = label(heatmap)
     img = draw_labeled_bboxes(img, labels)
