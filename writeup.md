@@ -32,7 +32,7 @@ This is it!
 ### Histogram of Oriented Gradients (HOG)
 #### 1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
-I created a [function]() called `get_hog_features()` which in an image, `orient`, `pix_per_cell`, and `cells_per_block` as inputs. Two other arguments, `vis` for visualization and `feature_vec` for feature vectors, are by default set to `False` and `True` respectively. If `vis` is set to `True`, the function outputs the features along with an image, otherwise it just returns the features.
+I created a [function](https://github.com/CassLamendola/vehicle-detection-and-tracking/blob/master/vehicle-tracking.py#L41-L59) called `get_hog_features()` which in an image, `orient`, `pix_per_cell`, and `cells_per_block` as inputs. Two other arguments, `vis` for visualization and `feature_vec` for feature vectors, are by default set to `False` and `True` respectively. If `vis` is set to `True`, the function outputs the features along with an image, otherwise it just returns the features.
 
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed a random images the training set and displayed it to get a feel for what the `skimage.hog()` output looks like.
 
@@ -46,7 +46,7 @@ I tried various combinations of parameters and colorspaces and ended up with the
 
 ####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-I first [normalized color features and HOG features]() to prepare for classification. Here is an example of color features before and after normalization:
+I first [normalized color features and HOG features](https://github.com/CassLamendola/vehicle-detection-and-tracking/blob/master/vehicle-tracking.py#L146-L159) to prepare for classification. Here is an example of color features before and after normalization:
 
 ![alt text][image2]
 
@@ -54,13 +54,13 @@ And here is an example of those color features along with HOG features before an
 
 ![alt text][image3]
 
-Once the features were normalized, I [trained a linear SVM]() using `LinearSVC()` from sklearn. Though it was the classifier I started with, it achieved 99% accuracy, so I thought it would be unnecessary to try an alternatives.
+Once the features were normalized, I [trained a linear SVM](https://github.com/CassLamendola/vehicle-detection-and-tracking/blob/master/vehicle-tracking.py#L164-L180) using `LinearSVC()` from sklearn. Though it was the classifier I started with, it achieved 99% accuracy, so I thought it would be unnecessary to try an alternatives.
 
 ### Sliding Window Search
 
 #### 1. Describe how (and identify where in your code) you implemented a sliding window search. How did you decide what scales to search and how much to overlap windows?
 
-I created a [function]() called `find_cars()` to search the image for cars. 
+I created a [function](https://github.com/CassLamendola/vehicle-detection-and-tracking/blob/master/vehicle-tracking.py#L182-L248) called `find_cars()` to search the image for cars. 
 
 Before searching the image with sliding windows, I selected the region of the image where cars would be expected and I converted that entire region to YUV colorspace and got all HOG features for the whole region. Then, with sliding windows, I extracted the HOG features and color features within a given window and used my SVM to predict whether or not the window contained a car. This was more efficient than converting the image and getting HOG features for every individual window.
 
@@ -72,17 +72,15 @@ I then began choosing different scales for window sizes to see which sizes would
 
 ![alt text][image6]
 
-On my [final pipeline](), I used 
-
 #### 2. Show some examples of test images to demonstrate how your pipeline is working. What did you do to optimize the performance of your classifier?
 
 Ultimately I searched on the following scales: [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 3] using YUV 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result. 
 
-Then I used a heatmap to minimize false positives and eliminate multiple detections of the same car. Here are some example images of the output from my pipeline:
+Then I used a heatmap in my [final pipeline](https://github.com/CassLamendola/vehicle-detection-and-tracking/blob/master/vehicle-tracking.py#L309-L320) to minimize false positives and eliminate multiple detections of the same car. Here are some example images of the output from my pipeline:
 
 ![alt text][image8]
 
-There are some obvious false positives, but these are addressed with the `Vehicles` [class]() which you can read about in the next section.
+There are some obvious false positives, but these are addressed with the `Vehicles` [class](https://github.com/CassLamendola/vehicle-detection-and-tracking/blob/master/vehicle-tracking.py#L287-L307) which you can read about in the next section.
 
 ---
 
@@ -93,12 +91,13 @@ Here's a [link to my video result]()
 
 #### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-As mentioned before, I used a [function]() to used a heatmap to reduce false positives. I recorded the positions of positive detections in each frame of the video. From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions. I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap. I assumed each blob corresponded to a vehicle, and I constructed bounding boxes to covert the area of each blob detected. 
+As mentioned before, I used a series of [functions](https://github.com/CassLamendola/vehicle-detection-and-tracking/blob/master/vehicle-tracking.py#L250-L285) to use a heatmap to reduce false positives. I recorded the positions of positive detections in each frame of the video. From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions. I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap. I assumed each blob corresponded to a vehicle, and I constructed bounding boxes to covert the area of each blob detected. 
 
 Here's an example result showing the heatmap from a test image and the resulting bounding boxes drawn:
 
 ![alt text][image7]
 
+Another way my pipeline reduces false positives in a video is by keeping track of detections from prevous frames. This is done with a [Vehicles](https://github.com/CassLamendola/vehicle-detection-and-tracking/blob/master/vehicle-tracking.py#L287-L307) class. In the pipeline, bounding boxes found in a frame are added to a list of bounding boxes from the last 5 frames in the Vehicles class. Then the final bounding box is found by implenting a heatmap over all bounding boxes in the list. This allows me to use a higher threshold to eliminate false positives because more bounding boxes will be found for legitimate cars.
 ___
 ### Discussion
 
@@ -107,6 +106,8 @@ ___
 One problem with my implementation is that it still has problems with detecting false positives. False positives are most commonly detected in the guardrail on an overpass. I could reduce this by collecting more data of those regions from the video, then adding them to my noncar data and retraining.
 
 Also, In a few frames of the output video, one car is "lost". This could be solved by decreasing the threshold for the heatmap. However, if the threshold is decreased without addressing the false positive issue, more false positives will be detected. What I have in my current output is a functional balance between minimal false positives and maximum vehile detection.
+
+Another problem is latency in the first few frames. Because the threshold is so large, it may not be able to detect cars until at least 2 or 3 frames have been saved. I'm not sure how this can be helped, other than eliminating the need to smooth over so many frames by implementing the methods described above.
 
 
 
