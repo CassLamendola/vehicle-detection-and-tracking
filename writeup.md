@@ -19,7 +19,7 @@ ________________________________
 [image5]: ./output_images/sliding_windows2.png "Windows1.5"
 [image6]: ./output_images/sliding_windows3.png "Windows1.75"
 [image7]: ./output_images/heat_map_detection.png "Heat"
-[image8]: ./output_images/pipleine.png "Pipeline"
+[image8]: ./output_images/pipeline.png "Pipeline"
 ________________________________
 
 ## Here I will consider the [rubric](https://review.udacity.com/#!/rubrics/513/view) points individually and describe how I addressed each point in my implementation.
