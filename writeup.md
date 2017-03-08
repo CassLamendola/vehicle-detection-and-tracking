@@ -97,14 +97,14 @@ Here's an example result showing the heatmap from a test image and the resulting
 
 ![alt text][image7]
 
-Another way my pipeline reduces false positives in a video is by keeping track of detections from prevous frames. This is done with a [Vehicles](https://github.com/CassLamendola/vehicle-detection-and-tracking/blob/master/vehicle-tracking.py#L287-L307) class. In the pipeline, bounding boxes found in a frame are added to a list of bounding boxes from the last 5 frames in the Vehicles class. Then the final bounding box is found by implenting a heatmap over all bounding boxes in the list. This allows me to use a higher threshold to eliminate false positives because more bounding boxes will be found for legitimate cars.
+Another way my pipeline reduces false positives in a video is by keeping track of detections from previous frames. This is done with a [Vehicles](https://github.com/CassLamendola/vehicle-detection-and-tracking/blob/master/vehicle-tracking.py#L287-L307) class. In the pipeline, bounding boxes found in a frame are added to a list of bounding boxes from the last 5 frames in the Vehicles class. Then the final bounding box is found by implementing a heatmap over all bounding boxes in the list. This allows me to use a higher threshold to eliminate false positives because more bounding boxes will be found for legitimate cars.
 ___
 ### Discussion
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project. Where will your pipeline likely fail? What could you do to make it more robust?
 
-One problem with my implementation is that it still has problems with detecting false positives. False positives are most commonly detected in the guardrail on an overpass. I could reduce this by collecting more data of those regions from the video, then adding them to my noncar data and retraining.
+One problem with my implementation is that it still has problems with detecting false positives. False positives are most commonly detected in the guardrail on an overpass. I could reduce this by collecting more data of those regions from the video, then adding them to my non-car data and retraining.
 
-Also, In a few frames of the output video, one car is "lost". This could be solved by decreasing the threshold for the heatmap. However, if the threshold is decreased without addressing the false positive issue, more false positives will be detected. What I have in my current output is a functional balance between minimal false positives and maximum vehile detection.
+Also, In a few frames of the output video, one car is "lost". This could be solved by decreasing the threshold for the heatmap. However, if the threshold is decreased without addressing the false positive issue, more false positives will be detected. What I have in my current output is a functional balance between minimal false positives and maximum vehicle detection.
 
 Another problem is latency in the first few frames. Because the threshold is so large, it may not be able to detect cars until at least 2 or 3 frames have been saved. I'm not sure how this can be helped, other than eliminating the need to smooth over so many frames by implementing the methods described above.
