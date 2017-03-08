@@ -87,7 +87,7 @@ There are some obvious false positives, but these are addressed with the `Vehicl
 ### Video Implementation
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
-Here's a [link to my video result]()
+Here's a [link to my video result](https://vimeo.com/207408225)
 
 #### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
@@ -108,7 +108,3 @@ One problem with my implementation is that it still has problems with detecting 
 Also, In a few frames of the output video, one car is "lost". This could be solved by decreasing the threshold for the heatmap. However, if the threshold is decreased without addressing the false positive issue, more false positives will be detected. What I have in my current output is a functional balance between minimal false positives and maximum vehile detection.
 
 Another problem is latency in the first few frames. Because the threshold is so large, it may not be able to detect cars until at least 2 or 3 frames have been saved. I'm not sure how this can be helped, other than eliminating the need to smooth over so many frames by implementing the methods described above.
-
-
-
-
